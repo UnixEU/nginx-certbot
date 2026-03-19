@@ -1,0 +1,11 @@
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+
+letsencrypt
+logs
+www
+
+.DS_Store

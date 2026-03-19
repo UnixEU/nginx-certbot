@@ -1,0 +1,33 @@
+server {
+    listen ${HTTP_BIND}:${HTTP_PORT};
+    server_name ${SERVER_NAME};
+
+    location /.well-known/acme-challenge/ {
+        root ${ACME_WEBROOT};
+    }
+
+    location / {
+        add_header Content-Type text/plain;
+        #__HTTP_REDIRECT__#
+    }
+}
+
+server {
+    listen ${HTTPS_BIND}:${HTTPS_PORT} ssl;
+    http2 on;
+    server_name ${SERVER_NAME};
+
+    ssl_certificate /etc/letsencrypt/live/${CERTBOT_CERT_NAME}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/${CERTBOT_CERT_NAME}/privkey.pem;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 10m;
+
+    location /.well-known/acme-challenge/ {
+        root ${ACME_WEBROOT};
+    }
+
+    location / {
+        return 200 '${HTTPS_RESPONSE_TEXT}\n';
+        add_header Content-Type text/plain;
+    }
+}

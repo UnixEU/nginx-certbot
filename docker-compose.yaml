@@ -1,0 +1,34 @@
+services:
+  nginx-certbot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NGINX_REPO: ${NGINX_REPO}
+        NGINX_REF: ${NGINX_REF}
+        CERTBOT_REPO: ${CERTBOT_REPO}
+        CERTBOT_REF: ${CERTBOT_REF}
+    image: ${IMAGE_NAME}:${IMAGE_TAG}
+    container_name: ${CONTAINER_NAME}
+    restart: unless-stopped
+    environment:
+      SERVER_NAME: ${SERVER_NAME}
+      CERTBOT_CERT_NAME: ${CERTBOT_CERT_NAME}
+      ACME_WEBROOT: ${ACME_WEBROOT}
+      HTTP_PORT: ${HTTP_PORT}
+      HTTPS_PORT: ${HTTPS_PORT}
+      HTTP_BIND: ${HTTP_BIND}
+      HTTPS_BIND: ${HTTPS_BIND}
+      HTTPS_REDIRECT_PORT: ${HTTPS_REDIRECT_PORT}
+      HTTP_REDIRECT_TO_HTTPS: ${HTTP_REDIRECT_TO_HTTPS}
+      HTTP_RESPONSE_TEXT: ${HTTP_RESPONSE_TEXT}
+      HTTPS_RESPONSE_TEXT: ${HTTPS_RESPONSE_TEXT}
+      SELF_SIGNED_CN: ${SELF_SIGNED_CN}
+      SELF_SIGNED_DAYS: ${SELF_SIGNED_DAYS}
+    ports:
+      - "${HOST_HTTP_PORT}:${HTTP_PORT}"
+      - "${HOST_HTTPS_PORT}:${HTTPS_PORT}"
+    volumes:
+      - ${LETSENCRYPT_DIR}:/etc/letsencrypt
+      - ${ACME_WEBROOT_DIR}:${ACME_WEBROOT}
+      - ${NGINX_LOG_DIR}:/var/log/nginx
